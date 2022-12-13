@@ -5,11 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/opt/ros/foxy/include/**",
-<<<<<<< HEAD
+                "/usr/local/include/opencv4/**",
                 "/usr/include/opencv4/**"
-=======
-                "/usr/local/include/**"
->>>>>>> f4f19454a6efcc1a03ffe36ade65c09573305837
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
