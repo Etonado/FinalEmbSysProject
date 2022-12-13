@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/opt/ros/foxy/include/**",
-                "/usr/local/include/opencv4/**",
+                "/usr/local/include/**",
+                "/includes/**",
                 "/usr/include/opencv4/**"
             ],
             "defines": [],
