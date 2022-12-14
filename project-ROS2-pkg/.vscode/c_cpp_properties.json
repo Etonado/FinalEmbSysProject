@@ -6,8 +6,8 @@
                 "${workspaceFolder}/**",
                 "/opt/ros/foxy/include/**",
                 "/usr/local/include/**",
-                "/includes/**",
-                "/usr/include/opencv4/**"
+                "../DynamixelSDK/**",
+                "/usr/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
