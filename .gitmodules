@@ -1,7 +1,4 @@
 [submodule "BRAM-uio-driver"]
 	path = BRAM-uio-driver
 	url = https://github.com/DIII-SDU-Group/BRAM-uio-driver.git
-[submodule "DynamixelSDK"]
-	path = DynamixelSDK
-	url = https://github.com/ROBOTIS-GIT/DynamixelSDK.git
-	branch = foxy-devel
+
