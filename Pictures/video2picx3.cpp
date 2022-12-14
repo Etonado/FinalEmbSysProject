@@ -1,3 +1,6 @@
+#include <iostream>
+#include <string>
+#include <filesystem>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
@@ -6,10 +9,10 @@
 
 using namespace cv;
 
-const int target_width = 80;
-const int target_height = 45;
+const int target_width = 32;
+const int target_height = 18;
 
-void save_image(const Mat& input, const String& filename)
+void save_image(const Mat &input, const String &filename)
 {
     // Check if the input image is empty
     if (input.empty())
@@ -25,7 +28,7 @@ void save_image(const Mat& input, const String& filename)
 int main()
 {
     // Open the video file
-    VideoCapture capture("video.mp4");
+    VideoCapture capture("/home/benjamin/Documents/Kandidat/embedded/Final_ass/FinalEmbSysProject/Pictures/embedded_dataset/straight_arm.mp4");
 
     // Check if the video was successfully opened
     if (!capture.isOpened())
@@ -35,8 +38,9 @@ int main()
     }
 
     // Extract and compress frames from the video
-    Mat frame, gray, mirrored, blurred;
+    Mat frame, gray, mirrored, blurred, mir_blur;
     int frame_index = 1;
+
     while (true)
     {
         // Read the next frame from the video
@@ -59,18 +63,35 @@ int main()
         // Blur the resized image using a Gaussian filter
         GaussianBlur(resized, blurred, Size(5, 5), 0);
 
+        GaussianBlur(mirrored, mir_blur, Size(5, 5), 0);
         // Save the original, mirrored, and blurred versions of the image
-        std::stringstream ss;
-        ss << frame_index;
 
-        save_image(resized, ss.str() + "_original.jpg");
-        save_image(mirrored, ss.str() + "_mirrored.jpg");
-        save_image(blurred, ss.str() + "_blurred.jpg");
+        save_image(resized, "./pics/straight_arm/" + std::to_string(frame_index) + ".jpg");
+        frame_index++;
+
+        save_image(mirrored, "./pics/straight_arm/" + std::to_string(frame_index) + ".jpg");
+        frame_index++;
+
+        save_image(blurred, "./pics/straight_arm/" + std::to_string(frame_index) + ".jpg");
+        frame_index++;
+
+        save_image(mir_blur, "./pics/straight_arm/" + std::to_string(frame_index) + ".jpg");
+        frame_index++;
+        /*
+                save_image(resized, dir+ss.str()+typ);
+                frame_index++;
+                ss << frame_index;
+                save_image(mirrored, dir+ss.str()+typ);
+                frame_index++;
+                ss << frame_index;
+                save_image(blurred, dir+ss.str()+typ);
+                frame_index++;
+                ss << frame_index;
+                save_image(mir_blur, dir+ss.str()+typ);
+        */
 
         // Increment the frame index
-        frame_index++;
     }
 
     return 0;
 }
-

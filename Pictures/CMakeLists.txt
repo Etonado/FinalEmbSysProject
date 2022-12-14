@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8)
+project( video2picx3)
+find_package( OpenCV REQUIRED )
+include_directories( ${OpenCV_INCLUDE_DIRS} )
+add_executable( video2picx3 video2picx3.cpp )
+target_link_libraries( video2picx3 ${OpenCV_LIBS} )
