@@ -1,0 +1,180 @@
+import numpy as np
+import cv2
+import os
+import time
+import tensorflow as tf
+import struct
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Flatten, Dense, Activation
+from sklearn.utils import shuffle
+import sys
+
+def main():
+	args = sys.argv[1:]
+	if len(args) == 2 and args[0] == '-dataset_dir':
+		dataset_dir = str(args[1])	
+
+	## Use CPU only
+	os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+
+	## Load MNIST dataset
+	print("Loading dataset")
+	train_images = []
+	train_labels = []
+	test_images = []
+	test_labels = []
+
+	dims = (32,18) # dimensions of images to train/test with
+
+	for j in range(2): # train and test	
+		for i in range(5): # 0 to 3
+			if j == 0:
+				read_folder = dataset_dir + '/training/' + str(i) + '/'
+			if j == 1:
+				read_folder = dataset_dir + '/test/' + str(i) + '/'
+			for filename in os.listdir(read_folder):
+				img = cv2.imread(os.path.join(read_folder,filename),0) # read img as grayscale
+				img = cv2.resize(img, dims, interpolation = cv2.INTER_AREA)	# resize img to fit dims
+				if img is not None:
+					if j == 0:
+						train_images.append(img / 255) # normalize pixel vals to be between 0 - 1
+						train_labels.append(i)
+					if j == 1:
+						test_images.append(img / 255)
+						test_labels.append(i)
+						#if(i == 0):
+						#	print("img0 = {",end="")
+						#	for h in range(18):
+						#		for t in range(32):
+						#			print(img[h][t]/255,end ="")
+						#			print(",",end ="")
+						#	print("}")
+
+	#print(test_images)
+	## Convert to numpy arrays, flatten images - change dimensions from Nx10x10 to Nx100
+	train_images = np.asarray(train_images).astype('float32')
+	test_images = np.asarray(test_images).astype('float32')
+	train_labels = np.asarray(train_labels).astype('uint8')
+	test_labels = np.asarray(test_labels).astype('uint8')
+
+	## Shuffle dataset
+	train_images, train_labels = shuffle(train_images, train_labels)
+	test_images, test_labels = shuffle(test_images, test_labels)
+
+	## Define network structure
+
+	# image size 32x18= 576
+	# 150
+	# 50
+	# 5
+	# error : 131/109
+	# epochs=50, batch_size=500, validation_split = 0.1)
+
+	#100 -> 5 117/91
+	#80 -> 5 101/80
+
+
+
+
+
+	model = Sequential([
+		Flatten(input_shape=dims),		# reshape 32x18 to 576, layer 0
+		Dense(80, activation='relu', use_bias=False),	# dense layer 1
+		#Dense(50, activation='relu', use_bias=False),	# dense layer 2
+		#Dense(30, activation='relu', use_bias=False),	# dense layer 2
+		Dense(5, activation='softmax', use_bias=False),	# dense layer 3
+	])
+
+	model.compile(optimizer='adam',
+				  loss='sparse_categorical_crossentropy',
+				  metrics=['accuracy'])
+
+
+	## Train network  
+	model.fit(train_images, train_labels, epochs=50, batch_size=500, validation_split = 0.1)
+
+	model.summary()
+
+	start_t = time.time()
+	results = model.evaluate(test_images, test_labels, verbose=0)
+	totalt_t = time.time() - start_t
+	print("Inference time for ", len(test_images), " test image: " , totalt_t, " seconds")
+
+
+	print("test loss, test acc: ", results)
+
+	#print(model.layers[1].weights[0].numpy().shape)
+	#print(model.layers[2].weights[0].numpy().shape)
+	#print(model.layers[3].weights[0].numpy().shape)
+
+	## Retrieve network weights after training. Skip layer 0 (input layer)
+	for w in range(1, len(model.layers)):
+		weight_filename = "layer_" + str(w) + "_weights.txt" 
+		open(weight_filename, 'w').close() # clear file
+		file = open(weight_filename,"a") 
+		file.write('{')
+		for i in range(model.layers[w].weights[0].numpy().shape[0]):
+			file.write('{')
+			for j in range(model.layers[w].weights[0].numpy().shape[1]):
+				file.write(str(model.layers[w].weights[0].numpy()[i][j]))
+				if j != model.layers[w].weights[0].numpy().shape[1]-1:
+					file.write(', ')
+			file.write('}')
+			if i != model.layers[w].weights[0].numpy().shape[0]-1:
+				file.write(', \n')
+		file.write('}')
+		file.close()
+
+	network_weights = model.layers[1].weights
+	#print(network_weights)
+	layer_1_W = network_weights[0].numpy()
+	#print(layer_1_W)
+
+
+	print("test_image[0] label: ", test_labels[0])
+
+	x = test_images[0]
+	x = np.expand_dims(x, axis=0)
+	print("NN Prediction: ", np.argmax(model.predict(x)))
+	count = 0
+	count0 = 0
+	count1 = 0
+	count2 = 0
+	count3 = 0
+	count4 = 0
+	length = 1000
+
+	for i in range (length):
+		x = test_images[i]
+		x = np.expand_dims(x, axis=0)
+		p = np.argmax(model.predict(x))
+		if(p!=test_labels[i]):
+			#print(test_labels[i], end = "")
+			#print(p)
+			count = count +1
+			if(p == 0):
+				count0 = count0 + 1
+			elif(p == 1):
+				count1 = count1 + 1
+			elif(p == 2):
+				count2 = count2 + 1
+			elif(p == 3):
+				count3 = count3 + 1
+			elif(p == 4):
+				count4 = count4 + 1
+				
+
+	print(count)
+	print(count0)
+	print(count1)
+	print(count2)
+	print(count3)
+	print(count4)
+
+
+	print("Finished")
+	
+	
+	
+if __name__=="__main__":
+    main()
