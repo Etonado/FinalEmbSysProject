@@ -25,6 +25,37 @@ class MotorPublisher : public rclcpp::Node
       //message.data = "Hello, world! " + std::to_string(count_++);gitclone-b $ROS_DISTRO-develhttps://github.com/ROBOTIS-GIT/DynamixelSDK.git
       //RCLCPP_INFO(this->get_logger(), "Publishing: '%s'", message.data.c_str());
       //publisher_->publish(message);
+
+      auto message = dynamixel_sdk_custom_interfaces::msg::SetPosition();
+
+      std::string joint_1 = '2';
+      std::string joint_2 = '3';
+
+      float angle_1 = 0.0;
+      float angle_2 = 0.0;
+
+      int pose = 0;
+
+      switch (pose)
+      {
+      case 0:
+        /* code */
+        break;
+      case 1:
+        break;
+        
+      case 2:
+        break;
+
+      case 3:
+        break;
+      case 4:
+        break;
+    
+      
+      default:
+        break;
+      }
     }
     rclcpp::TimerBase::SharedPtr timer_;
     rclcpp::Publisher<dynamixel_sdk_custom_interfaces::msg::SetPosition>::SharedPtr publisher_;
