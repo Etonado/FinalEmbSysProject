@@ -71,13 +71,13 @@ begin
         end if;
         
         if rising_edge(clk) then
-            if cnt < 10 then
+            if cnt < 3 then
                 cnt := cnt + 1;
             end if;
         end if;
         
        
-        if (cnt > 9 and rstb_busy = '0') then
+        if (cnt > 2 and rstb_busy = '0') then
             cnt := 0;
             bram_en_sig <= '1';
             if(start_prev = '0' and ap_idle = '1' and ctrl_reg(0) = '1') then
