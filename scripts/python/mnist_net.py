@@ -27,7 +27,7 @@ def main():
 	dims = (32,18) # dimensions of images to train/test with
 
 	for j in range(2): # train and test	
-		for i in range(5): # 0 to 3
+		for i in range(5): # 0 to 4
 			if j == 0:
 				read_folder = dataset_dir + '/training/' + str(i) + '/'
 			if j == 1:
@@ -37,18 +37,18 @@ def main():
 				img = cv2.resize(img, dims, interpolation = cv2.INTER_AREA)	# resize img to fit dims
 				if img is not None:
 					if j == 0:
-						train_images.append(img / 255) # normalize pixel vals to be between 0 - 1
+						train_images.append(img/255)# / 255) # normalize pixel vals to be between 0 - 1
 						train_labels.append(i)
 					if j == 1:
-						test_images.append(img / 255)
+						test_images.append(img/255)# / 255)
 						test_labels.append(i)
 						#if(i == 0):
 						#	print("img0 = {",end="")
-						#	for h in range(18):
-						#		for t in range(32):
-						#			print(img[h][t]/255,end ="")
-						#			print(",",end ="")
-						#	print("}")
+							#for h in range(18):
+								#for t in range(32):
+								#	print(img[h][t],end ="")
+								#	print(",",end ="")
+							#print("}")
 
 	#print(test_images)
 	## Convert to numpy arrays, flatten images - change dimensions from Nx10x10 to Nx100
@@ -91,7 +91,7 @@ def main():
 
 
 	## Train network  
-	model.fit(train_images, train_labels, epochs=50, batch_size=500, validation_split = 0.1)
+	model.fit(train_images, train_labels, epochs=25, batch_size=500, validation_split = 0.1)
 
 	model.summary()
 
@@ -135,42 +135,7 @@ def main():
 
 	x = test_images[0]
 	x = np.expand_dims(x, axis=0)
-	print("NN Prediction: ", np.argmax(model.predict(x)))
-	count = 0
-	count0 = 0
-	count1 = 0
-	count2 = 0
-	count3 = 0
-	count4 = 0
-	length = 1000
-
-	for i in range (length):
-		x = test_images[i]
-		x = np.expand_dims(x, axis=0)
-		p = np.argmax(model.predict(x))
-		if(p!=test_labels[i]):
-			#print(test_labels[i], end = "")
-			#print(p)
-			count = count +1
-			if(p == 0):
-				count0 = count0 + 1
-			elif(p == 1):
-				count1 = count1 + 1
-			elif(p == 2):
-				count2 = count2 + 1
-			elif(p == 3):
-				count3 = count3 + 1
-			elif(p == 4):
-				count4 = count4 + 1
-				
-
-	print(count)
-	print(count0)
-	print(count1)
-	print(count2)
-	print(count3)
-	print(count4)
-
+	print("NN Prediction: ", np.argmax(model.predict(x)))	
 
 	print("Finished")
 	
